@@ -1,0 +1,5 @@
+{
+    "port": 3000,
+    "connectionString": "Server=localhost,1433;Database=BaldarSQL;User Id=baldar-test;Password=123456;Encrypt=true;trustedConnection=true;encrypt=true;enableArithAbort=true;trustServerCertificate=true",
+    "storedProcedure": "Bws_NextDestinationByBarcode"
+}

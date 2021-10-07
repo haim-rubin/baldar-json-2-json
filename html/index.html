@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+            <style>
+                button{ display: inline-block; padding: 3px; margin: 3px 0;}
+                .textarea-wrapper{display: inline-block;}
+            </style>
+        </head>
+      <body>
+
+        <h1>My Tester for Baldar Stored Procedure</h1>
+        <div>
+            <h4>Enter a valid JSON, with the following params: barcode, actLocation, invokeId</h4>
+            <button type="button">Execute</button><span id='results'></span><span id='error'></span>
+        </div>
+        <div>
+            <div class="textarea-wrapper">
+                <div>Input JSON</div>
+                <textarea id="input-json" rows="20" cols="70"></textarea>
+            </div>
+            <div class="textarea-wrapper">
+                <div>Ouput JSON</div>
+                <textarea id="output-json" rows="20" cols="70"></textarea>
+            </div>
+            
+        </div>
+       
+        <script>
+            const buttonRef =  document.querySelector('button')
+            const textInputRef = document.querySelector('#input-json')
+            const textOutputRef = document.querySelector('#output-json')
+            const resultsRef = document.querySelector('#results')
+            const errorRef = document.querySelector('#error')
+
+            const runHttp = async (body) => {
+                const results = await fetch('/', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(body)
+                });
+
+                const content = await results.json()
+                return content
+            }
+            const isValidJsonObject = (value) => {
+                try {
+                    const obj = JSON.parse(value)
+                    if(typeof obj === 'object' && obj !== null) {
+                        return { isValid: true, obj }
+                    }
+                    return { isValid: false, message: 'Not an object' }
+                } catch(error) {
+                    console.error(error)
+                    return { isValid: false, message: error.toString() }
+                }                
+            }
+
+            buttonRef.addEventListener('click', async () => {
+                resultsRef.innerHTML = ''
+                errorRef.innerHTML = ''
+                const validationResult = isValidJsonObject(textInputRef.value)
+                if(!validationResult.isValid) {                  
+                    errorRef.innerHTML = validationResult.message
+                    return
+                }
+                
+                try {
+
+                   const result = await runHttp(validationResult.obj)
+                   textOutputRef.innerHTML = JSON.stringify(result)
+                } catch(error) {
+                    errorRef.innerHTML = JSON.stringify(error)
+                }
+            })
+        </script>
+      </body>
+  </html>
